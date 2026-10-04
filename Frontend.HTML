@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classificador de Texto - CAED</title>
+    <!-- Tailwind CSS via CDN para estilização -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 border border-slate-200">
+        <h1 class="text-3xl font-bold text-slate-800 text-center mb-2">Classificador de Complexidade</h1>
+        <p class="text-slate-500 text-center mb-6">Insira o texto abaixo para que a Inteligência Artificial avalie o nível de dificuldade.</p>
+
+        <!-- Entrada de Texto -->
+        <div class="mb-6">
+            <textarea id="textInput" rows="6" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition duration-200 resize-none text-slate-700" placeholder="Cole ou digite seu texto aqui..."></textarea>
+        </div>
+
+        <!-- Botão de Ação -->
+        <button id="categorizeBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition duration-200 ease-in-out">
+            Categorizar Texto
+        </button>
+
+        <!-- Container do Resultado -->
+        <div id="resultContainer" class="mt-8 hidden transition-all duration-300 transform opacity-0 translate-y-4">
+            <div class="p-6 rounded-xl text-center border">
+                <p class="text-sm uppercase tracking-wider font-semibold text-slate-500 mb-1">Nível Estimado</p>
+                <h2 id="resultLevel" class="text-2xl font-extrabold mb-2">---</h2>
+                <p id="resultDesc" class="text-sm opacity-90">---</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script JavaScript responsável pela lógica e comunicação com a API Python -->
+    <script>
+        // Definição das categorias de resposta e seus estilos visuais
+        const categories = {
+            BEGINNER: {
+                label: "Iniciante (Nível 1)",
+                desc: "Texto simples, com vocabulário acessível e estruturas sintáticas diretas.",
+                colors: "bg-emerald-50 border-emerald-300 text-emerald-800"
+            },
+            INTERMEDIATE: {
+                label: "Intermediário (Nível 2)",
+                desc: "Texto com complexidade média, construções frasais mais elaboradas e vocabulário diversificado.",
+                colors: "bg-amber-50 border-amber-300 text-amber-800"
+            },
+            ADVANCED: {
+                label: "Avançado (Nível 3)",
+                desc: "Texto denso, com vocabulário técnico/formal e estruturas sintáticas complexas.",
+                colors: "bg-rose-50 border-rose-300 text-rose-800"
+            },
+            EXPERT: {
+                label: "Especialista (Nível 4)",
+                desc: "Texto altamente técnico ou acadêmico com alto nível de abstração.",
+                colors: "bg-purple-50 border-purple-300 text-purple-800"
+            }
+        };
+
+        // Elementos do DOM
+        const textInput = document.getElementById('textInput');
+        const categorizeBtn = document.getElementById('categorizeBtn');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultLevel = document.getElementById('resultLevel');
+        const resultDesc = document.getElementById('resultDesc');
+
+        // Função que conecta com o servidor Python (Flask)
+        async function chamarApiPython(text) {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/avaliar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: text })
+                });
+                
+                if (!response.ok) throw new Error('Erro ao comunicar com a IA');
+                
+                const data = await response.json();
+                const nivelRetornado = data.nivel.toUpperCase();
+                
+                if (nivelRetornado.includes('INICIANTE') || nivelRetornado === '1') return categories.BEGINNER;
+                if (nivelRetornado.includes('INTERMEDI') || nivelRetornado === '2') return categories.INTERMEDIATE;
+                if (nivelRetornado.includes('AVANÇADO') || nivelRetornado === '3') return categories.ADVANCED;
+                return categories.EXPERT;
+                
+            } catch (error) {
+                console.error("Erro:", error);
+                alert("Ocorreu um erro ao conectar com o Python. Verifique se o Backend.py está em execução no terminal.");
+                return null;
+            }
+        }
+
+        // Evento do clique no botão
+        categorizeBtn.addEventListener('click', async () => {
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                textInput.classList.add('border-red-500');
+                setTimeout(() => textInput.classList.remove('border-red-500'), 1000);
+                return;
+            }
+
+            // Estado de carregamento
+            categorizeBtn.disabled = true;
+            categorizeBtn.textContent = 'A processar pela IA...';
+            categorizeBtn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            resultContainer.classList.add('hidden', 'opacity-0', 'translate-y-4');
+            resultContainer.firstElementChild.className = 'p-6 rounded-xl text-center border'; 
+
+            // Chamada da API
+            const result = await chamarApiPython(text);
+
+            // Restaura o botão
+            categorizeBtn.disabled = false;
+            categorizeBtn.textContent = 'Categorizar Texto';
+            categorizeBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+
+            // Exibe o resultado na interface
+            if (result) {
+                resultLevel.textContent = result.label;
+                resultDesc.textContent = result.desc;
+                resultContainer.firstElementChild.classList.add(...result.colors.split(' '));
+                
+                resultContainer.classList.remove('hidden');
+                setTimeout(() => {
+                    resultContainer.classList.remove('opacity-0', 'translate-y-4');
+                }, 50);
+            }
+        });
+    </script>
+</body>
+</html>
