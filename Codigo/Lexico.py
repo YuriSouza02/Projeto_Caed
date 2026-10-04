@@ -70,7 +70,7 @@ def calcular_dificuldade_palavra(palavra: str) -> float:
 
     dif_canonicidade = 0.0 if eh_canonica(palavra) else 1.0
 
-    score = (dif_frequencia * 0.60) + (dif_tamanho * 0.20) + (dif_canonicidade * 0.20)
+    score = (dif_frequencia * 0.80) + (dif_tamanho * 0.10) + (dif_canonicidade * 0.10)
     return round(score, 2)
 
 

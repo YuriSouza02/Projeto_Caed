@@ -6,7 +6,6 @@ import numpy as np
 # Importação dos módulos de cálculo
 import Codigo.Lexico as Lexico
 import Codigo.Sintaxe as Sintaxe
-import Codigo.Estilo as Estilo
 
 # Carregar o modelo de NLP apenas uma vez na inicialização do sistema
 print("A carregar modelo de Linguagem Natural (spaCy)...")
@@ -21,18 +20,33 @@ def extrair_features(texto: str) -> dict:
     """
     doc = nlp(texto)
 
-    score_lexico, _ = Lexico.analisar_dificuldade_texto(texto, nlp)
+    # 1. Recuperamos a lista de palavras em vez de usar o "_"
+    score_lexico, analise_palavras = Lexico.analisar_dificuldade_texto(texto, nlp)
+
+    # 2. NOVA MÉTRICA: Densidade de Palavras Raras
+    # Consideramos "rara" uma palavra com dificuldade bruta acima de 0.70
+    total_palavras_validas = len(analise_palavras)
+    qtd_raras = sum(1 for p in analise_palavras if p["dificuldade_bruta"] > 0.70)
+    densidade_raras = (
+        (qtd_raras / total_palavras_validas) if total_palavras_validas > 0 else 0.0
+    )
+
+    # 3. Métricas restantes
     fator_sintatico = Sintaxe.calcular_fator_proporcao(doc)
     profundidade = Sintaxe.calcular_profundidade_media_arvore(doc)
     voz_passiva = Sintaxe.calcular_proporcao_voz_passiva(doc)
     dens_pontuacao = Sintaxe.calcular_densidade_pontuacao(doc)
     dens_dialogos = Sintaxe.calcular_densidade_dialogos(doc)
     dens_conectivos = Sintaxe.calcular_densidade_conectivos(doc)
-    ttr = Estilo.calcular_ttr(texto)
+    ttr = Sintaxe.calcular_ttr(
+        texto
+    )  # Ou Estilo.calcular_ttr, dependendo da sua versão atual
 
-    # Retornamos apenas as features úteis para o modelo
     return {
         "score_lexico": score_lexico,
+        "densidade_palavras_raras": round(
+            densidade_raras, 4
+        ),
         "fator_sintatico": fator_sintatico,
         "profundidade_arvore": profundidade,
         "proporcao_voz_passiva": voz_passiva,
