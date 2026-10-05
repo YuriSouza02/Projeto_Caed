@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classificador de Texto - CAED</title>
+    <title>Plataforma de Processamento de Texto - CAED</title>
     <!-- Tailwind CSS via CDN para estilização -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-slate-100 min-h-screen py-12 px-4 flex flex-col items-center space-y-12">
 
+    <!-- CARD 1: Classificador de Complexidade -->
     <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 border border-slate-200">
         <h1 class="text-3xl font-bold text-slate-800 text-center mb-2">Classificador de Complexidade</h1>
         <p class="text-slate-500 text-center mb-6">Insira o texto abaixo para que a Inteligência Artificial avalie o nível de dificuldade.</p>
 
         <!-- Entrada de Texto -->
         <div class="mb-6">
-            <textarea id="textInput" rows="6" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition duration-200 resize-none text-slate-700" placeholder="Cole ou digite seu texto aqui..."></textarea>
+            <textarea id="textInput" rows="5" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition duration-200 resize-none text-slate-700" placeholder="Cole ou digite seu texto aqui..."></textarea>
         </div>
 
         <!-- Botão de Ação -->
@@ -33,9 +34,51 @@
         </div>
     </div>
 
-    <!-- Script JavaScript responsável pela lógica e comunicação com a API Python -->
+
+    <!-- CARD 2: Gerador de Variação Lexical (Troca de Palavras) -->
+    <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 border border-slate-200">
+        <h2 class="text-3xl font-bold text-slate-800 text-center mb-2">Substituição de Palavras</h2>
+        <p class="text-slate-500 text-center mb-6">Altere automaticamente o texto trocando palavras por sinônimos ou antônimos.</p>
+
+        <!-- Entrada de Texto -->
+        <div class="mb-4">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Texto Original:</label>
+            <textarea id="trocaTextInput" rows="5" class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition duration-200 resize-none text-slate-700" placeholder="Digite ou cole o texto para modificar..."></textarea>
+        </div>
+
+        <!-- Opções (Modo e Taxa de Troca) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Modo de Substituição:</label>
+                <select id="modoSelect" class="w-full p-3 border border-slate-300 rounded-xl bg-white focus:ring-2 focus:ring-emerald-500 outline-none text-slate-700">
+                    <option value="sinonimo">Sinônimos</option>
+                    <option value="antonimo">Antônimos</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">Taxa de Alteração: <span id="probValue" class="text-emerald-600 font-bold">50%</span></label>
+                <input id="probRange" type="range" min="0.1" max="1.0" step="0.1" value="0.5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600 mt-3">
+            </div>
+        </div>
+
+        <!-- Botão de Gerar -->
+        <button id="trocarBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md transition duration-200 ease-in-out">
+            Gerar Novo Texto
+        </button>
+
+        <!-- Resultado do Texto Modificado -->
+        <div id="trocaResultContainer" class="mt-8 hidden">
+            <label class="block text-sm font-semibold text-slate-700 mb-2">Resultado Modificado:</label>
+            <div id="trocaResultBox" class="p-4 bg-slate-50 border border-slate-300 rounded-xl text-slate-800 leading-relaxed font-normal whitespace-pre-wrap"></div>
+        </div>
+    </div>
+
+
+    <!-- Script JavaScript responsável pela lógica da página -->
     <script>
-        // Definição das categorias de resposta e seus estilos visuais
+        // ==========================================
+        // LÓGICA DO CARD 1: Classificador
+        // ==========================================
         const categories = {
             BEGINNER: {
                 label: "Ensino fundamental I (Nível 1)",
@@ -59,50 +102,20 @@
             }
         };
 
-        // Elementos do DOM
         const textInput = document.getElementById('textInput');
         const categorizeBtn = document.getElementById('categorizeBtn');
         const resultContainer = document.getElementById('resultContainer');
         const resultLevel = document.getElementById('resultLevel');
         const resultDesc = document.getElementById('resultDesc');
 
-        // Função que conecta com o servidor Python (Flask)
-        async function chamarApiPython(text) {
-            try {
-                const response = await fetch('http://127.0.0.1:5000/api/avaliar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ texto: text })
-                });
-                
-                if (!response.ok) throw new Error('Erro ao comunicar com a IA');
-                
-                const data = await response.json();
-                const nivelRetornado = data.nivel.toUpperCase();
-                
-                if (nivelRetornado.includes('INICIANTE') || nivelRetornado === '1') return categories.BEGINNER;
-                if (nivelRetornado.includes('INTERMEDI') || nivelRetornado === '2') return categories.INTERMEDIATE;
-                if (nivelRetornado.includes('AVANÇADO') || nivelRetornado === '3') return categories.ADVANCED;
-                return categories.EXPERT;
-                
-            } catch (error) {
-                console.error("Erro:", error);
-                alert("Ocorreu um erro ao conectar com o Python. Verifique se o Backend.py está em execução no terminal.");
-                return null;
-            }
-        }
-
-        // Evento do clique no botão
         categorizeBtn.addEventListener('click', async () => {
             const text = textInput.value.trim();
-            
             if (!text) {
                 textInput.classList.add('border-red-500');
                 setTimeout(() => textInput.classList.remove('border-red-500'), 1000);
                 return;
             }
 
-            // Estado de carregamento
             categorizeBtn.disabled = true;
             categorizeBtn.textContent = 'A processar pela IA...';
             categorizeBtn.classList.add('opacity-75', 'cursor-not-allowed');
@@ -110,24 +123,88 @@
             resultContainer.classList.add('hidden', 'opacity-0', 'translate-y-4');
             resultContainer.firstElementChild.className = 'p-6 rounded-xl text-center border'; 
 
-            // Chamada da API
-            const result = await chamarApiPython(text);
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/avaliar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: text })
+                });
+                const data = await response.json();
+                const nivelRetornado = data.nivel.toUpperCase();
 
-            // Restaura o botão
-            categorizeBtn.disabled = false;
-            categorizeBtn.textContent = 'Categorizar Texto';
-            categorizeBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                let result = categories.EXPERT;
+                if (nivelRetornado.includes('INICIANTE') || nivelRetornado === '1') result = categories.BEGINNER;
+                else if (nivelRetornado.includes('INTERMEDI') || nivelRetornado === '2') result = categories.INTERMEDIATE;
+                else if (nivelRetornado.includes('AVANÇADO') || nivelRetornado === '3') result = categories.ADVANCED;
 
-            // Exibe o resultado na interface
-            if (result) {
                 resultLevel.textContent = result.label;
                 resultDesc.textContent = result.desc;
                 resultContainer.firstElementChild.classList.add(...result.colors.split(' '));
                 
                 resultContainer.classList.remove('hidden');
-                setTimeout(() => {
-                    resultContainer.classList.remove('opacity-0', 'translate-y-4');
-                }, 50);
+                setTimeout(() => resultContainer.classList.remove('opacity-0', 'translate-y-4'), 50);
+            } catch (error) {
+                alert("Erro ao conectar com a API do classificador.");
+            } finally {
+                categorizeBtn.disabled = false;
+                categorizeBtn.textContent = 'Categorizar Texto';
+                categorizeBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+
+
+        // ==========================================
+        // LÓGICA DO CARD 2: Troca de Palavras
+        // ==========================================
+        const trocaTextInput = document.getElementById('trocaTextInput');
+        const modoSelect = document.getElementById('modoSelect');
+        const probRange = document.getElementById('probRange');
+        const probValue = document.getElementById('probValue');
+        const trocarBtn = document.getElementById('trocarBtn');
+        const trocaResultContainer = document.getElementById('trocaResultContainer');
+        const trocaResultBox = document.getElementById('trocaResultBox');
+
+        // Atualiza a porcentagem ao arrastar o slider
+        probRange.addEventListener('input', (e) => {
+            probValue.textContent = Math.round(e.target.value * 100) + '%';
+        });
+
+        trocarBtn.addEventListener('click', async () => {
+            const text = trocaTextInput.value.trim();
+            if (!text) {
+                trocaTextInput.classList.add('border-red-500');
+                setTimeout(() => trocaTextInput.classList.remove('border-red-500'), 1000);
+                return;
+            }
+
+            trocarBtn.disabled = true;
+            trocarBtn.textContent = 'Substituindo palavras...';
+            trocarBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            trocaResultContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/troca-palavra', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        texto: text,
+                        modo: modoSelect.value,
+                        prob_troca: parseFloat(probRange.value)
+                    })
+                });
+
+                if (!response.ok) throw new Error("Erro na API");
+
+                const data = await response.json();
+                trocaResultBox.textContent = data.texto_modificado;
+                trocaResultContainer.classList.remove('hidden');
+
+            } catch (error) {
+                alert("Erro ao processar a troca de palavras. Verifique o terminal do Python.");
+            } finally {
+                trocarBtn.disabled = false;
+                trocarBtn.textContent = 'Gerar Novo Texto';
+                trocarBtn.classList.remove('opacity-75', 'cursor-not-allowed');
             }
         });
     </script>

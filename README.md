@@ -4,7 +4,7 @@
 Na pasta raiz do projeto:
 python -m venv .venv
 .venv\Scripts\activate
-pip install wordfreq spacy pandas scikit-learn joblib flask flask-cors
+pip install wordfreq spacy pandas scikit-learn joblib flask flask-cors nltk
 python -m spacy download pt_core_news_sm
 python Codigo/main.py
 python Backend.py
