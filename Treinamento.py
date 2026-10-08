@@ -8,7 +8,6 @@ import Codigo.Complexidade as Complexidade
 from Codigo.Leitura import carregar_dados_do_diretorio
 
 
-
 def treinar_modelo(df: pd.DataFrame, caminho_modelo: str = "modelo_rf_dificuldade.pkl"):
     print("A extrair características (features) do corpus de treino...")
     df_features = Complexidade.construir_dataset_features(df)
@@ -81,16 +80,3 @@ if __name__ == "__main__":
     else:
         print(f"Sucesso! Foram carregados {len(df_base)} textos no total.\n")
         treinar_modelo(df_base, "modelo_rf_dificuldade.pkl")
-
-        print("-" * 50)
-        textos_teste = [
-            "A gata bebeu o leite todo da tigela.",
-            "A epistemologia subjacente à metodologia empírica requer um escrutínio rigoroso.",
-        ]
-
-        for txt in textos_teste:
-            nivel_previsto = Complexidade.prever_dificuldade_texto(
-                txt, "modelo_rf_dificuldade.pkl"
-            )
-            print(f"TEXTO: '{txt}'")
-            print(f"NÍVEL PREVISTO PELA RANDOM FOREST: {nivel_previsto}\n")

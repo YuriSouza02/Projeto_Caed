@@ -225,3 +225,4 @@ def calcular_comprimento_medio_frase(doc) -> float:
 
     total_palavras = sum(palavras_por_frase)
     return round(total_palavras / len(sents), 2)
+

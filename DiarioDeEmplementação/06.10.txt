@@ -53,7 +53,7 @@ Serão criados os seguintes parâmetros:
 * Quantidade de pontuação;
 * Quantidade de diálogos.
 
-O algoritmo conseguiu alcançar uma aproximação relativamente boa (para uma primeira instancia), com uma taxa de acerto global de cerca de 50%.
+O algoritmo conseguiu alcançar uma aproximação relativamente boa (para uma primeira instancia), com uma taxa de acerto global de cerca de 70%.
 
 Relatório de Classificação Final (Treinamento.py):
 
@@ -61,7 +61,13 @@ Relatório de Classificação Final (Treinamento.py):
            precision
 ```
 
-fundamental1     0.61
-fundamental2     0.45
-media            0.47
-superior         0.54
+fundamental1     0.76
+fundamental2     0.53
+media            0.70
+superior         0.75
+
+Matriz de Confusão:
+[[ 50   6   2   1]
+ [  9  38  10   8]
+ [  5  12  74  35]
+ [  2  16  19 129]]
