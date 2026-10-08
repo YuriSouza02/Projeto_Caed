@@ -1,0 +1,67 @@
+Foi realizado o primeiro treinamento.
+
+Bibliotecas utilizadas:
+
+* scikit-learn;
+* joblib.
+
+Problemas encontrados:
+
+Há parâmetros demais para o algoritmo considerar. Ao todo, são 18:
+
+* Tamanho da palavra;
+* Raridade de cada palavra;
+* Tamanho das orações;
+* Canonicidade;
+* Quantidade de conectivos;
+* Quantidade de orações em voz passiva;
+* Quantidade de palavras únicas;
+* Quantidade de citações;
+* Quantidade de pontuação;
+* Quantidade de diálogos;
+* Proporção de numerais;
+* Proporção de verbos;
+* Proporção de substantivos;
+* Proporção de adjetivos;
+* Proporção de advérbios;
+* Proporção de pronomes;
+* Proporção de preposições;
+* Proporção de conjunções.
+
+As proporções de cada elemento do texto são consideradas igualmente relevantes. Entretanto, verbos, adjetivos e substantivos, por exemplo, podem ter maior impacto do que pronomes.
+
+O algoritmo Random Forest não foi capaz de encontrar uma classificação eficiente.
+
+Mudanças:
+
+Serão criados os seguintes parâmetros:
+
+1. Métrica léxica
+
+* Dificuldade da palavra: será obtida pela combinação do tamanho, da raridade e canonicidade das palavras.
+* Dificuldade do texto: será obtida pela combinação de todas as proporções, com pesos correspondentes a cada classe gramatical.
+* Numero medio de letras por palavra.
+* Numero medio de palavras por frase.
+
+2. Métrica sintática
+
+* Tamanho das orações;
+* Quantidade de conectivos;
+* Quantidade de orações em voz passiva;
+* Quantidade de palavras únicas;
+* Quantidade de citações;
+* Quantidade de pontuação;
+* Quantidade de diálogos.
+
+O algoritmo conseguiu alcançar uma aproximação relativamente boa (para uma primeira instancia), com uma taxa de acerto global de cerca de 50%.
+
+Relatório de Classificação Final (Treinamento.py):
+
+```
+           precision
+```
+
+fundamental1     0.61
+fundamental2     0.45
+media            0.47
+superior         0.54

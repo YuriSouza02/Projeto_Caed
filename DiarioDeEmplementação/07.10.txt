@@ -1,0 +1,26 @@
+Primeira interface web feita. Início da implementação das mutações.
+
+Foi iniciada a implementação da troca de palavras por sinônimos e antônimos.
+
+Bibliotecas utilizadas:
+
+* flask;
+* flask-cors.
+
+Ideias:
+
+* Usar o spaCy;
+* Usar transformers.
+
+Problemas encontrados:
+
+Para as mutações:
+
+* O spaCy entrega resultados rápidos, porém imprecisos. Não consegue considerar o contexto ou o gênero textual, trabalhando principalmente com palavras isoladas e suas relações de sinonímia e antonímia.
+* Os transformers são pesados demais para o escopo do projeto. Entregam muita qualidade, porém o tempo de instalação é de cerca de 20 minutos e ocupam cerca de 2 GB. É inviável.
+
+Resultados:
+
+A ideia foi utilizar o spaCy para identificar a classe gramatical das palavras e realizar as substituições apenas em substantivos, adjetivos, verbos e advérbios.
+Para cada palavra, são buscados sinônimos ou antônimos a partir de sua forma lematizada, utilizando a WordNet.
+A substituição é feita de forma aleatória, com uma probabilidade definida, preservando a capitalização e o espaçamento original do texto.

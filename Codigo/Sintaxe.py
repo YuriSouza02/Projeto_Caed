@@ -142,27 +142,29 @@ def calcular_fator_proporcao(doc) -> float:
     fator = 1.0
 
     # Penalidades Léxicas/POS
-    if (substantivos + adjetivos) / total_palavras > 0.45:
+    if (substantivos + adjetivos + verbos) / total_palavras > 0.50:
         fator += 0.15
-    if substantivos / (verbos + 1) > 2.0:
+    # Correção 2: Proteção contra divisão por zero se verbos == 0
+    if verbos > 0:
+        if (substantivos / verbos) > 2.5:
+            fator += 0.10
+    elif substantivos > 0:
         fator += 0.10
     if numerais / total_palavras > 0.15:
-        fator += 0.10
+        fator += 0.15
     if qtd_complexas / total_palavras > 0.20:
         fator += 0.15
 
     # Penalidades Sintáticas e Discursivas
     if calcular_profundidade_media_arvore(doc) > 4.5:
         fator += 0.15
-    if calcular_proporcao_voz_passiva(doc) > 0.25:
+    if calcular_proporcao_voz_passiva(doc) > 0.2:
         fator += 0.10
     if calcular_densidade_pontuacao(doc) > 2.5:
         fator += 0.10
-    if calcular_densidade_conectivos(doc) > 0.02:
+    if calcular_densidade_conectivos(doc) > 0.03:
         fator += 0.10
-
-    # Bônus de Acessibilidade
-    if calcular_densidade_dialogos(doc) > 0.30:
+    if calcular_densidade_dialogos(doc) > 0.10:
         fator -= 0.15
 
     return round(fator, 2)
@@ -182,8 +184,44 @@ def calcular_ttr(texto: str) -> float:
 
     if total_palavras == 0:
         return 0.0
+    ttr = len(set(palavras)) / total_palavras
+    return round(ttr, 4)
 
-    if total_palavras < 20:
-        return round(len(set(palavras)) / (total_palavras + 15), 4)
 
-    return round(len(set(palavras)) / total_palavras, 4)
+def calcular_media_caracteres_palavra(doc) -> float:
+    """
+    O QUE FAZ: Mede a extensão média das palavras do texto em quantidade de caracteres.
+
+    METODOLOGIA: Filtra os tokens do spaCy ignorando pontuações e espaços. Soma o
+    comprimento individual (len) de cada palavra válida e divide pelo total de palavras.
+    Palavras mais longas (como termos técnicos ou polissílabos) exigem maior tempo
+    de fixação ocular e aumentam a carga cognitiva na leitura.
+    """
+    tokens_validos = [t for t in doc if not t.is_punct and not t.is_space]
+    if not tokens_validos:
+        return 0.0
+
+    total_caracteres = sum(len(t.text) for t in tokens_validos)
+    return round(total_caracteres / len(tokens_validos), 2)
+
+
+def calcular_comprimento_medio_frase(doc) -> float:
+    """
+    O QUE FAZ: Mede a extensão média das frases calculando a quantidade de palavras
+    por oração/frase.
+
+    METODOLOGIA: Percorre as frases identificadas pelo spaCy (doc.sents) e conta
+    apenas os tokens válidos (excluindo pontuações e espaços). Em seguida, calcula
+    a média dividindo o total de palavras pelo número de frases do texto. Frases longas
+    exigem maior retenção na memória de trabalho do leitor, elevando a dificuldade.
+    """
+    sents = list(doc.sents)
+    if not sents:
+        return 0.0
+
+    palavras_por_frase = [
+        sum(1 for t in sent if not t.is_punct and not t.is_space) for sent in sents
+    ]
+
+    total_palavras = sum(palavras_por_frase)
+    return round(total_palavras / len(sents), 2)

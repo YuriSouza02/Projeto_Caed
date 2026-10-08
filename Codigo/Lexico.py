@@ -1,9 +1,6 @@
 import re
 from wordfreq import zipf_frequency
 
-# Constantes globais
-VOGAIS = set("aeiouáéíóúâêôãõàü")
-CONSOANTES = set("bcdfghjklmnpqrstvwxyzç")
 """
 METODOLOGIA DE PESOS LÉXICOS:
 Diferentes classes gramaticais afetam a leitura de forma distinta.
@@ -37,14 +34,17 @@ def eh_canonica(palavra: str) -> bool:
     """
     p = palavra.lower().strip()
 
-    if len(p) == 0 or len(p) % 2 != 0:
+    if not p:
         return False
 
-    for i in range(0, len(p), 2):
-        if p[i] not in CONSOANTES or p[i + 1] not in VOGAIS:
-            return False
+    # Padrão Regex: Início (^) ao fim ($) formado por sequências de (Consoante opcional + 1 Vogal)
+    vogais_str = "aeiouáéíóúâêôãõàü"
+    consoantes_str = "bcdfghjklmnpqrstvwxyzç"
+    padrao_canonico = re.compile(
+        f"^([{consoantes_str}]?[{vogais_str}])+$", re.IGNORECASE
+    )
 
-    return True
+    return bool(padrao_canonico.match(p))
 
 
 def calcular_dificuldade_palavra(palavra: str) -> float:
@@ -53,12 +53,12 @@ def calcular_dificuldade_palavra(palavra: str) -> float:
     palavra isolada.
 
     METODOLOGIA: Composição de três métricas penalizadoras:
-    1. Frequência (60% do peso): Utiliza a escala de Zipf (biblioteca wordfreq) para
+    1. Frequência (70% do peso): Utiliza a escala de Zipf (biblioteca wordfreq) para
        descobrir quão comum a palavra é no idioma. Palavras muito raras recebem
        uma penalização alta.
-    2. Tamanho (20% do peso): Calcula a proporção do tamanho da palavra face a um
+    2. Tamanho (15% do peso): Calcula a proporção do tamanho da palavra face a um
        limite de 15 caracteres. Quanto maior, mais difícil.
-    3. Canonicidade (20% do peso): Aplica uma penalização inteira (1.0)
+    3. Canonicidade (15% do peso): Aplica uma penalização inteira (1.0)
        se a palavra for canónica.
     O resultado é a soma destas três fatias matemáticas.
     """
@@ -68,9 +68,9 @@ def calcular_dificuldade_palavra(palavra: str) -> float:
     dif_frequencia = 1.0 - ((zipf_limitado - 1.0) / (6.5 - 1.0))
     dif_tamanho = min(1.0, len(palavra) / 15.0)
 
-    dif_canonicidade = 0.0 if eh_canonica(palavra) else 1.0
+    dif_canonicidade = 1.0 if eh_canonica(palavra) else 0.0
 
-    score = (dif_frequencia * 0.80) + (dif_tamanho * 0.10) + (dif_canonicidade * 0.10)
+    score = (dif_frequencia * 0.70) + (dif_tamanho * 0.15) + (dif_canonicidade * 0.15)
     return round(score, 2)
 
 

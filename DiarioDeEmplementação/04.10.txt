@@ -1,0 +1,26 @@
+Implementação das lógicas das heurísticas
+
+Bibliotecas utilizadas:
+
+* wordfreq;
+* nltk;
+* spaCy;
+* pandas.
+
+Problemas encontrados:
+
+* Quantidade de palavras únicas: em textos pequenos, essa métrica tende a superestimar a diversidade lexical, já que muitas ou todas as palavras podem ser únicas.
+* Proporção de verbos, substantivos, adjetivos e conectivos: a classificação inicial era incompleta, pois o português possui outras classes gramaticais relevantes para a análise.
+* Tamanho do texto: embora textos maiores possam exigir esforço, o tamanho do texto, por si só, não determina se ele pertence ao nível fundamental, médio ou superior.
+* Quantidade de citações: ainda não foi definida uma forma adequada de identificá-las automaticamente. É necessário realizar um estudo sobre o tema.
+* Quantidade de fórmulas matemáticas: ainda não foi definida uma forma adequada de identificá-las automaticamente. É necessário realizar um estudo sobre o tema.
+* Quantidade de diálogos: a detecção de travessões pode gerar falsos positivos.
+
+Modificações:
+
+* Quantidade de palavras únicas: foi estabelecida uma quantidade mínima de 50 palavras para que essa regra seja aplicada.
+* Proporção de verbos, substantivos, adjetivos e conectivos: foram adicionadas as categorias de advérbios, pronomes, preposições, conjunções e verbos auxiliares.
+* Tamanho do texto: descartado.
+* Quantidade de citações: não foi identificada uma forma adequada de medi-las. Descartado.
+* Quantidade de fórmulas matemáticas: substituído pela densidade de numerais.
+* Quantidade de diálogos: contabilização de travessões ou de pares de aspas. O risco será assumido, considerando que a ocorrência de falsos positivos tende a ser baixa.

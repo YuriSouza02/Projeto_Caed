@@ -1,0 +1,45 @@
+Implementação do Random Forest e reflexão sobre a heurística do problema.
+
+Pontos considerados para a heurística e suas justificativas
+
+* Tamanho do texto: textos mais longos podem exigem maior esforço e tempo de atenção contínua.
+* Tamanho da palavra: palavras longas tendem a corresponder a termos técnicos, compostos ou polissilábicos.
+* Raridade de cada palavra: palavras de baixa frequência no vocabulário geral exigem que o leitor possua maior domínio lexico.
+* Tamanho das orações: orações extensas podem concentrar muitas ideias em um único período.
+* Canonicidade (sugestão): como estruturas canônicas tendem a ser mais simples, sua presença pode ser um indicativo de que o texto é destinado a crianças ou adolescentes.
+* Quantidade de conectivos: pode indicar muitas relações lógicas ou uma estrutura textual hierarquicamente complexa.
+* Quantidade de orações em voz passiva: a voz passiva altera a ordem mais comum entre agente e ação, podendo exigir maior esforço para compreender.
+* Quantidade de palavras únicas: uma alta diversidade lexica pode dificultar a familiarização do leitor com os conceitos centrais.
+* Quantidade de citações: uma quantidade elevada de citações pode introduzir mais referências externas e aumentar a quantidade de informações que precisam ser relacionadas.
+* Quantidade de pontuação: uma alta densidade de sinais de pontuação pode fragmentar o ritmo de leitura e indicar uma estrutura sintática complexa.
+* Quantidade de fórmulas matemáticas: o uso intenso de notação formal é geralmente caracteristica de textos academicos.
+* Quantidade de diálogos: geralmente a textos narrativos e infantis.
+* Proporção de verbos: uma alta densidade verbal pode indicar um texto mais voltado para ações, processos e dinamismo.
+* Proporção de substantivos: textos com alta densidade nominal tendem a apresentar maior concentração de conceitos, podendo ser mais abstratos.
+* Proporção de adjetivos: uma elevada proporção de adjetivos pode acrescentar camadas descritivas demais.
+
+Separação entre léxico e sintaxe
+
+1. Métrica léxica
+
+* Tamanho da palavra;
+* Raridade de cada palavra;
+* Quantidade de palavras únicas;
+* Proporção de verbos;
+* Proporção de substantivos;
+* Proporção de adjetivos;
+* Proporção de conectivos.
+
+2. Métrica sintática
+
+* Tamanho das orações;
+* Canonicidade;
+* Quantidade de orações em voz passiva;
+* Quantidade de pontuação.
+
+3. Métrica textual
+
+* Tamanho do texto;
+* Quantidade de citações;
+* Quantidade de fórmulas matemáticas;
+* Quantidade de diálogos.
