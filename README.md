@@ -28,21 +28,7 @@ Linux / macOS:
 [B] NAS EXECUÇÕES SEGUINTES
 Como a .venv já estará configurada, você pode escolher uma das opções:
 
-Opção 1:
-  Execute diretamente o servidor usando o Python do ambiente virtual:
-
-  Windows:
-    .venv\Scripts\python Backend.py
-
-  Linux / macOS:
-    .venv/bin/python Backend.py
-
-Opção 2:
-  Rode novamente 'python dependencias.py' (ou 'python3 dependencias.py').
-  O script detectará a .venv existente, ativará o ambiente e iniciará o backend.
-
-Opção 3:
-  Ative o ambiente virtual no seu terminal e execute o arquivo normalmente:
+  Execute diretamente o servidor:
 
   Windows:
     .venv\Scripts\activate

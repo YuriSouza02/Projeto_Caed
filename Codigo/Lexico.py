@@ -62,15 +62,18 @@ def calcular_dificuldade_palavra(palavra: str) -> float:
        se a palavra for canónica.
     O resultado é a soma destas três fatias matemáticas.
     """
+    if not palavra or not palavra.strip():
+        return 0.0
+
     zipf = zipf_frequency(palavra.lower(), "pt")
-    zipf_limitado = min(max(zipf, 1.0), 6.5)
+    zipf_val = zipf if zipf is not None else 0.0
+    zipf_limitado = min(max(zipf_val, 1.0), 6.5)
 
     dif_frequencia = 1.0 - ((zipf_limitado - 1.0) / (6.5 - 1.0))
     dif_tamanho = min(1.0, len(palavra) / 15.0)
-
-    dif_canonicidade = 1.0 if eh_canonica(palavra) else 0.0
-
+    dif_canonicidade = 0.0 if eh_canonica(palavra) else 1.0
     score = (dif_frequencia * 0.70) + (dif_tamanho * 0.15) + (dif_canonicidade * 0.15)
+    
     return round(score, 2)
 
 
