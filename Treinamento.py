@@ -9,18 +9,24 @@ from Codigo.Leitura import carregar_dados_do_diretorio
 
 
 def treinar_modelo(df: pd.DataFrame, caminho_modelo: str = "modelo_rf_dificuldade.pkl"):
+    """
+    Treina um classificador Random Forest para identificar os níveis de
+    dificuldade textual. Extrai as características do corpus, divide os
+    dados em conjuntos de treino e teste, preservando a proporção das classes,
+    e utiliza GridSearchCV para selecionar os melhores hiperparâmetros com
+    base no F1-score macro.
+    """
     print("A extrair características (features) do corpus de treino...")
     df_features = Complexidade.construir_dataset_features(df)
 
     X = df_features.drop(["nivel_dificuldade"], axis=1)
     y = df_features["nivel_dificuldade"]
 
-    # Correção: Adicionado stratify=y para manter proporções de classes no teste
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
 
-    print("A treinar Classificador com GridSearchCV...")
+    print("A treinar Classificador...")
     rf_base = RandomForestClassifier(random_state=7, class_weight="balanced")
 
     param_grid = {
@@ -62,7 +68,7 @@ def treinar_modelo(df: pd.DataFrame, caminho_modelo: str = "modelo_rf_dificuldad
 
 if __name__ == "__main__":
     entrada = input(
-        "Quantos ficheiros deseja ler por nível de dificuldade? (Deixe em branco e prima Enter para ler TODOS): "
+        "Quantos ficheiros deseja ler por nível de dificuldade? (Deixe em branco para ler TODOS): "
     )
 
     if entrada.strip().isdigit():

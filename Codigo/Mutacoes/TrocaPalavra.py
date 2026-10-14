@@ -39,7 +39,6 @@ def obter_sinonimos_antonimos(
 
     palavra_limpa = palavra.lower().strip()
 
-    # Adjetivos na WordNet são divididos entre 'a' (ADJ) e 's' (ADJ_SAT)
     if pos_spacy == "ADJ":
         wn_poses = [wn.ADJ, wn.ADJ_SAT]
     elif pos_spacy in MAPA_POS_WORDNET:
@@ -54,7 +53,6 @@ def obter_sinonimos_antonimos(
         else:
             synsets.extend(wn.synsets(palavra_limpa, lang="por"))
 
-    # Fallback: busca synsets gerais caso o idioma português não encontre diretamente
     if not synsets:
         for wn_pos in wn_poses:
             if wn_pos:
@@ -63,7 +61,6 @@ def obter_sinonimos_antonimos(
                 synsets.extend(wn.synsets(palavra_limpa))
 
     for syn in synsets:
-        # Para adjetivos, inclui synsets da relação similar_tos()
         synsets_relacionados = [syn]
         if syn.pos() in (wn.ADJ, wn.ADJ_SAT):
             synsets_relacionados.extend(syn.similar_tos())

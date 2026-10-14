@@ -7,16 +7,18 @@ PRÉ-REQUISITOS
 
   sudo apt update && sudo apt install python3-venv
 
+Considere que todo o desenvolvimento foi feito em ambiente windows. Pode haver passos a mais para tomar caso queira rodar a aplicação em ambiente linux.
 
 ------------------------------------------------------------------------
 COMO EXECUTAR
 ------------------------------------------------------------------------
 Abra o terminal na pasta raiz do projeto e utilize os comandos abaixo.
 
-[A] PRIMEIRA VEZ RODANDO O PROJETO
-O script dependencias.py cuida de todo o processo automaticamente:
-cria o ambiente virtual (.venv), ativa o ambiente internamente, instala
-todas as dependências, baixa os modelos (spaCy/NLTK) e inicia o backend.
+[A] Istalação do corpus textual
+essa tarefa precisa ser feita de forma manual. dentro da pasta "DataBase" há as 4 sub divisões do corpus textual (Ensino fundamental 1, Ensino fundamental 2, Ensino medio e Ensino superior). Deverá ser inserido nas suas respectivas pastas os textos de cada nivel textual os textos correspondentes. Os textos deveram esta separados em arquivos diferentes e todos em TXT.
+
+[B] PRIMEIRA VEZ RODANDO O PROJETO
+O script dependencias.py cuida de todas as dependencias do projeto. O tempo de download e intalação gira entorno de 10 minutos.
 
 Windows:
   python dependencias.py
@@ -25,22 +27,8 @@ Linux / macOS:
   python3 dependencias.py
 
 
-[B] NAS EXECUÇÕES SEGUINTES
-Como a .venv já estará configurada, você pode escolher uma das opções:
-
-  Execute diretamente o servidor:
-
-  Windows:
-    .venv\Scripts\activate
-    python Backend.py
-
-  Linux / macOS:
-    source .venv/bin/activate
-    python Backend.py
-
-
-[C] RETREINAR O MODELO (EXTRAS)
-Caso queira retreinar o algoritmo de predição utilizando o ambiente isolado:
+[C] TREINAR O MODELO
+treine o algoritmo de predição utilizando:
 
 Windows:
   .venv\Scripts\python Treinamento.py
@@ -49,29 +37,13 @@ Linux / macOS:
   .venv/bin/python Treinamento.py
 
 
-------------------------------------------------------------------------
-TECNOLOGIAS UTILIZADAS
-------------------------------------------------------------------------
-Flask & Flask-CORS      : Framework web para a API.
-spaCy (pt_core_news_sm) : Processamento de Linguagem Natural em Português.
-NLTK (wordnet, omw-2.0) : Processamento e bases de dados lexicais.
-Pandas & Scikit-Learn   : Manipulação de dados e modelos de ML.
-Joblib                  : Carregamento e salvamento de modelos treinados.
-Wordfreq                : Análise de frequência de palavras.
-Transformers            : Manipulação de texto.
+[D] EXECUTAR A APLICAÇÂO WEB
+Como a .venv já estará configurada:
 
+  Execute diretamente o servidor:
 
-pontos que foram considerandos:
-    Diversidade no vocabulario.
-    --Tamanho do texto--
-    Palavra ser comum na lingua
-    Tamanho da palavra
-    Canonicidade da palavra
-    ponderação de clases linguisticas
-    conplexidades de uma oração com base na complexidade das palavras contidas nela
-    quantidade de vogais em porporção
-    sobordinação
-    voz passiva
-    quantidade de frases
-    quatidade de dialogos
-    quantidade de conectivos    
+  Windows:
+    python Iniciar.py
+
+  Linux / macOS:
+    python Iniciar.py

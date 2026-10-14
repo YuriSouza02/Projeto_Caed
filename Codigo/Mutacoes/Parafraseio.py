@@ -121,13 +121,12 @@ def _parafrasear_bloco_adverbial(doc) -> Optional[str]:
     ]
     padrao_conectivos = "|".join(conectivos)
 
-    # Adicionamos a lógica do "Há [tempo]" como um bloco que pode ser capturado inteiro
     padrao_bloco_inicio = (
         rf"^((?:{padrao_conectivos})\s+.+?|há\s+[^,.!?]+(?:\s+atrás)?),\s*(.+)$"
     )
     padrao_bloco_fim = rf"^(.+?)\s*,?\s*((?:{padrao_conectivos})\s+.+?|há\s+[^,.!?]+(?:\s+atrás)?)([.:;!?]?)$"
 
-    # 1. Bloco no INÍCIO -> desloca para o FIM
+    # Bloco no INÍCIO -> desloca para o FIM
     match_inicio = re.match(padrao_bloco_inicio, texto, re.IGNORECASE)
     if match_inicio:
         bloco_adverbial, oracao_principal = match_inicio.groups()
@@ -142,7 +141,7 @@ def _parafrasear_bloco_adverbial(doc) -> Optional[str]:
 
         return f"{oracao_principal_fmt} {bloco_adverbial_fmt}{pontuacao}".strip()
 
-    # 2. Bloco no FIM -> desloca para o INÍCIO
+    # Bloco no FIM -> desloca para o INÍCIO
     match_fim = re.match(padrao_bloco_fim, texto, re.IGNORECASE)
     if match_fim:
         oracao_principal, bloco_adverbial, pontuacao = match_fim.groups()
@@ -347,7 +346,6 @@ def realizar_parafraseio(
     doc_pipeline = nlp_model if nlp_model is not None else nlp
     doc = doc_pipeline(texto)
 
-    # _parafrasear_bloco_adverbial assume a responsabilidade total pelas orações e adjuntos temporais.
     resultado = (
         _parafrasear_bloco_adverbial(doc)
         or _parafrasear_titulo_aposto(doc)
@@ -361,9 +359,6 @@ def realizar_parafraseio(
 
 # ==========================================
 # MAIN COM TESTE COMPLETO DE TODAS AS POSSIBILIDADES
-# ==========================================
-# ==========================================
-# BATERIA DE TESTES DEDICADA: VOZES VERBAIS (ATIVA <-> PASSIVA)
 # ==========================================
 if __name__ == "__main__":
     casos_de_teste_vozes = {
@@ -395,9 +390,9 @@ if __name__ == "__main__":
             "As enfermeiras atenderam os pacientes.",
         ],
         "6. Casos de Controle / Bloqueios (Sem conversão esperada)": [
-            "O garoto dormiu cedo ontem.",                # Verbo Intransitivo (Sem Objeto)
-            "A aluna vai ter que estudar para a prova.",  # Com locução/auxiliar complexo
-            "O sol brilha no horizonte.",                 # Verbo Intransitivo
+            "O garoto dormiu cedo ontem.",
+            "A aluna vai ter que estudar para a prova.",
+            "O sol brilha no horizonte.",
         ],
     }
 

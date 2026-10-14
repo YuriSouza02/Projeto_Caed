@@ -144,7 +144,6 @@ def calcular_fator_proporcao(doc) -> float:
     # Penalidades Léxicas/POS
     if (substantivos + adjetivos + verbos) / total_palavras > 0.50:
         fator += 0.15
-    # Correção 2: Proteção contra divisão por zero se verbos == 0
     if verbos > 0:
         if (substantivos / verbos) > 2.5:
             fator += 0.10
