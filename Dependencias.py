@@ -2,6 +2,8 @@ import os
 import sys
 import subprocess
 import urllib.request
+import os
+from Iniciar import iniciar_sistema
 
 
 def main():
@@ -50,16 +52,18 @@ def main():
     )
     subprocess.run([sys.executable, "-m", "pip", "install"] + pacotes, check=True)
 
-    # Verifica e baixa o modelo do spaCy apenas se ainda não estiver instalado
+    # Verifica e baixa os modelos do spaCy (sm e lg) apenas se não estiverem instalados
     import spacy.util
 
-    if not spacy.util.is_package("pt_core_news_lg"):
-        print("Baixando modelo do spaCy com Word Vectors (pt_core_news_lg)...")
-        subprocess.run(
-            [sys.executable, "-m", "spacy", "download", "pt_core_news_lg"], check=True
-        )
-    else:
-        print("Modelo 'pt_core_news_lg' já está instalado.")
+    modelos_spacy = ["pt_core_news_sm", "pt_core_news_lg"]
+    for modelo in modelos_spacy:
+        if not spacy.util.is_package(modelo):
+            print(f"Baixando modelo do spaCy ({modelo})...")
+            subprocess.run(
+                [sys.executable, "-m", "spacy", "download", modelo], check=True
+            )
+        else:
+            print(f"Modelo '{modelo}' já está instalado.")
 
     # Baixa a tabela morfológica do UniMorph para Português
     caminho_unimorph_pt = os.path.join(diretorio_base, "unimorph_pt.tsv")
@@ -84,3 +88,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    iniciar_sistema()

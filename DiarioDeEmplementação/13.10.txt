@@ -7,3 +7,6 @@ tive inicialmente a ideia de usar o wordnet, mas ela analisa apenas palavras iso
 problemas de concordancia e significado são grandes.
 
 Não consegui um bom resultado por causa disso.
+
+O uso de uma nova tecnologia foi necessaria pt core news lg com word embeddings.
+
